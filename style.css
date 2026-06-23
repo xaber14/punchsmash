@@ -9,254 +9,251 @@
   margin: 0;
   padding: 0;
 }
-
 html, body {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   background: #111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   overflow: hidden;
   font-family: 'Fredoka One', 'Arial Black', Arial, sans-serif;
 }
 
-/* ═══════════════════════════════════════════
-   PHONE SHELL
-   ═══════════════════════════════════════════ */
+/* ── PHONE SHELL ── */
 .phone-shell {
-  width: 390px;
-  height: 844px;
-  max-height: 100vh;
-  position: relative;
-  overflow: hidden;
-  border-radius: 0;
+  width: 390px; height: 844px; max-height: 100vh;
+  position: relative; overflow: hidden; border-radius: 0;
 }
 
-/* ═══════════════════════════════════════════
-   SCREEN MANAGEMENT
-   ═══════════════════════════════════════════ */
+/* ── SCREEN MANAGEMENT ── */
 .screen {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  pointer-events: none;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0; pointer-events: none;
   transition: opacity 0.5s ease;
 }
-.screen.active {
-  opacity: 1;
-  pointer-events: all;
-}
+.screen.active { opacity: 1; pointer-events: all; }
 
-/* ═══════════════════════════════════════════
+/* ══════════════════════════════════════════
    SPLASH SCREEN
-   ═══════════════════════════════════════════ */
+══════════════════════════════════════════ */
 #splash .bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
 }
-
 .mascot-wrap {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 310px;
-  height: 310px;
-  animation:
-    mascotIn 0.7s ease-out both,
-    mascotFloat 2.2s ease-in-out infinite;
+  position: absolute; top: 50%; left: 50%;
+  width: 310px; height: 310px;
+  animation: mascotIn 0.7s ease-out both, mascotFloat 2.2s ease-in-out infinite;
   animation-delay: 0s, 0.7s;
 }
 .mascot-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.5));
+  width: 100%; height: 100%; object-fit: contain;
+  filter: drop-shadow(0 12px 32px rgba(0,0,0,0.5));
 }
-
 @keyframes mascotIn {
-  from { opacity: 0; transform: translate(-50%, -46%) scale(0.85); }
-  to   { opacity: 1; transform: translate(-50%, -56%) scale(1); }
+  from { opacity: 0; transform: translate(-50%,-46%) scale(0.85); }
+  to   { opacity: 1; transform: translate(-50%,-56%) scale(1); }
 }
 @keyframes mascotFloat {
-  0%,100% { transform: translate(-50%, -56%) translateY(0px)    rotate(0deg); }
-  25%     { transform: translate(-50%, -56%) translateY(-10px)  rotate(-1deg); }
-  50%     { transform: translate(-50%, -56%) translateY(-14px)  rotate(0deg); }
-  75%     { transform: translate(-50%, -56%) translateY(-10px)  rotate(1deg); }
+  0%,100% { transform: translate(-50%,-56%) translateY(0)    rotate(0deg); }
+  25%     { transform: translate(-50%,-56%) translateY(-10px) rotate(-1deg); }
+  50%     { transform: translate(-50%,-56%) translateY(-14px) rotate(0deg); }
+  75%     { transform: translate(-50%,-56%) translateY(-10px) rotate(1deg); }
 }
-
 .loading-section {
-  position: absolute;
-  bottom: 80px;
-  left: 50%;
+  position: absolute; bottom: 80px; left: 50%;
   transform: translateX(-50%);
   width: 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  animation: fadeUp 0.6s ease-out both;
-  animation-delay: 0.3s;
-  opacity: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  animation: fadeUp 0.6s ease-out both; animation-delay: 0.3s; opacity: 0;
 }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateX(-50%) translateY(20px); }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
-
 .loading-label {
-  font-size: 26px;
-  color: #fff;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  -webkit-text-stroke: 6px #2a0a5e;
-  paint-order: stroke fill;
+  font-size: 26px; color: #fff; letter-spacing: 2px; text-transform: uppercase;
+  -webkit-text-stroke: 6px #2a0a5e; paint-order: stroke fill;
 }
-
 .bar-outer {
-  width: 100%;
-  height: 34px;
-  border-radius: 999px;
-  background: #1a0040;
-  padding: 3px;
-  box-shadow:
-    0 0 0 3px #7b3fe4,
-    0 0 0 5px #1a0040,
-    inset 0 2px 6px rgba(0, 0, 0, 0.6);
+  width: 100%; height: 34px; border-radius: 999px;
+  background: #1a0040; padding: 3px;
+  box-shadow: 0 0 0 3px #7b3fe4, 0 0 0 5px #1a0040, inset 0 2px 6px rgba(0,0,0,0.6);
 }
 .bar-track {
-  width: 100%;
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #888 0%, #555 40%, #444 60%, #666 100%);
-  overflow: hidden;
-  position: relative;
-  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.7);
+  width: 100%; height: 100%; border-radius: 999px;
+  background: linear-gradient(180deg,#888 0%,#555 40%,#444 60%,#666 100%);
+  overflow: hidden; position: relative;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.7);
 }
 .bar-fill {
-  position: absolute;
-  inset: 0;
-  width: 0%;
-  border-radius: 999px;
+  position: absolute; inset: 0; width: 0%; border-radius: 999px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0) 40%),
+    linear-gradient(180deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,0) 40%),
     linear-gradient(180deg, #ffe066 0%, #ffc200 35%, #e09000 65%, #ffc200 85%, #ffe580 100%);
-  box-shadow:
-    inset 0 3px 5px rgba(255,255,255,0.4),
-    inset 0 -2px 4px rgba(0,0,0,0.2);
+  box-shadow: inset 0 3px 5px rgba(255,255,255,.4), inset 0 -2px 4px rgba(0,0,0,.2);
 }
 
-/* ═══════════════════════════════════════════
+/* ══════════════════════════════════════════
    HOMEPAGE
-   ═══════════════════════════════════════════ */
+══════════════════════════════════════════ */
 #home .bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+}
+
+/* ── Samsak pendulum ── */
+.samsak-anchor {
+  position: absolute; top: 0; left: 50%;
+  width: 0; height: 0;
+  transform-origin: top center;
+  animation: samsakSwing 3.6s cubic-bezier(0.37,0,0.63,1) infinite;
+  will-change: transform;
+}
+@keyframes samsakSwing {
+  0%   { transform: rotate(-6deg); }
+  50%  { transform: rotate(6deg); }
+  100% { transform: rotate(-6deg); }
+}
+.samsak-wrap {
+  position: absolute; top: -10px; left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.55));
+}
+.samsak-wrap img {
+  width: 100%; display: block; object-fit: contain;
+  transition: filter 0.4s ease;
+}
+
+/* ── Photo sticker — taped photo blended into samsak ── */
+.samsak-sticker {
+  position: absolute;
+  top: 180px;
+  left: -80px;
+  width: 160px;
+  padding: 7px 7px 18px;
+  background: #ede5ce;
+  /* Contact shadow: tight + soft layers hug photo to the surface */
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.55),               /* tight contact edge */
+    0 3px 6px rgba(0,0,0,0.50),               /* close ambient */
+    0 10px 22px rgba(0,0,0,0.45),             /* soft drop */
+    inset 0 0 14px rgba(0,0,0,0.18);
+  transform: rotate(-2deg) scale(0.55);
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.55s cubic-bezier(0.34,1.2,0.64,1);
+  pointer-events: none;
+  z-index: 10;
+}
+.samsak-sticker.visible {
+  opacity: 1;
+  transform: rotate(-2deg) scale(1);
+  pointer-events: all;
+}
+
+/* Outer contact glow — darkens the samsak right around the photo edges
+   so it reads as pressed onto the surface, not floating */
+.samsak-sticker::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 6px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0,0,0,0) 55%,
+    rgba(0,0,0,0.28) 78%,
+    rgba(0,0,0,0.45) 100%
+  );
+  z-index: -1;
+  filter: blur(4px);
+}
+
+/* Photo area — cylindrical wrap + aged look */
+.photo-frame {
+  position: relative;
+  width: 146px;
+  height: 138px;
+  overflow: hidden;
+  transform: perspective(280px) rotateY(5deg);
+  box-shadow: inset 0 0 16px rgba(0,0,0,0.35);
+}
+.photo-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: contrast(0.86) brightness(0.80) saturate(0.82);
+  display: block;
+}
+
+/* Edge vignette + cylinder lighting overlay ON TOP of the photo,
+   making the photo's own edges sink + curve into the bag */
+.photo-frame::after {
+  content: '';
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  pointer-events: none;
+  background:
+    /* corner/edge darkening so the paper edges merge with the bag */
+    radial-gradient(
+      ellipse 120% 115% at center,
+      rgba(0,0,0,0) 60%,
+      rgba(0,0,0,0.30) 88%,
+      rgba(0,0,0,0.5) 100%
+    ),
+    /* vertical cylinder shading: bright center, darker left+right
+       to follow the samsak's round surface */
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,0.30) 0%,
+      rgba(0,0,0,0) 22%,
+      rgba(255,255,255,0.06) 50%,
+      rgba(0,0,0,0) 78%,
+      rgba(0,0,0,0.34) 100%
+    );
+  mix-blend-mode: multiply;
 }
 
-/* Top bar */
-.top-bar {
+/* Tape pieces at each corner */
+.tape {
   position: absolute;
-  top: 20px;
-  left: 0;
-  right: 0;
-  padding: 0 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  width: 34px; height: 12px;
+  background: rgba(220, 210, 180, 0.6);
+  border: 0.5px solid rgba(170,155,115,0.4);
+  z-index: 4;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,0.08) 0px,
+    rgba(255,255,255,0.08) 1px,
+    transparent 1px,
+    transparent 3px
+  );
 }
-.icon-btn {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: rgba(10, 0, 40, 0.60);
-  border: 2px solid rgba(140, 80, 255, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
-  transition: transform 0.1s, filter 0.1s;
-}
-.icon-btn:active {
-  transform: scale(0.92);
-  filter: brightness(0.82);
-}
-.icon-btn svg {
-  width: 22px;
-  height: 22px;
-}
+.tape-tl { top: -4px;  left:  14px; transform: rotate(-44deg); }
+.tape-tr { top: -4px;  right: 14px; transform: rotate( 44deg); }
+.tape-bl { bottom: -4px; left:  14px; transform: rotate( 44deg); }
+.tape-br { bottom: -4px; right: 14px; transform: rotate(-44deg); }
 
-.coin-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(10, 0, 40, 0.60);
-  border: 2px solid rgba(140, 80, 255, 0.45);
-  border-radius: 999px;
-  padding: 5px 14px 5px 7px;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
-}
-.coin-icon {
-  width: 28px;
-  height: 28px;
+.sticker-remove {
+  position: absolute;
+  top: -10px; right: -10px;
+  width: 22px; height: 22px;
+  background: rgba(20,0,40,0.85);
+  color: #fff; border: 1.5px solid rgba(255,255,255,0.3);
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ffe566, #f5a800);
-  border: 2px solid #b87800;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
+  font-size: 10px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 5;
+  transition: background 0.15s;
 }
-.coin-count {
-  font-size: 18px;
-  color: #fff;
-  -webkit-text-stroke: 3px #2a0a5e;
-  paint-order: stroke fill;
-}
+.sticker-remove:active { background: rgba(180,0,0,0.85); }
 
-/* Mascot on home */
-.mascot-home {
-  position: absolute;
-  bottom: 248px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 210px;
-  height: 210px;
-  animation: mascotHomeFloat 2.4s ease-in-out infinite;
-}
-.mascot-home img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.45));
-}
-@keyframes mascotHomeFloat {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50%       { transform: translateX(-50%) translateY(-10px); }
-}
-
-/* Play button */
+/* ── Play button ── */
 .btn-play {
-  position: absolute;
-  bottom: 170px;
-  left: 50%;
+  position: absolute; bottom: 140px; left: 50%;
   transform: translateX(-50%);
-  width: 260px;
-  cursor: pointer;
-  animation: btnPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  width: 260px; cursor: pointer;
+  animation: btnPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
   animation-delay: 0.2s;
   transition: transform 0.1s, filter 0.1s;
 }
@@ -264,63 +261,189 @@ html, body {
   from { opacity: 0; transform: translateX(-50%) scale(0.7); }
   to   { opacity: 1; transform: translateX(-50%) scale(1); }
 }
-.btn-play:active {
-  transform: translateX(-50%) scale(0.93);
-  filter: brightness(0.86);
-}
+.btn-play:active { transform: translateX(-50%) scale(0.93); filter: brightness(0.86); }
 .btn-play img {
-  width: 100%;
-  display: block;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
+  width: 100%; display: block;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.5));
 }
 
-/* Bottom 3 action buttons */
+/* ── Bottom 3 action buttons ── */
 .bottom-actions {
-  position: absolute;
-  bottom: 38px;
-  left: 50%;
+  position: absolute; bottom: 30px; left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  gap: 14px;
-  align-items: flex-end;
-  animation: fadeUp2 0.5s ease-out both;
-  animation-delay: 0.35s;
+  display: flex; gap: 14px; align-items: flex-end;
+  animation: fadeUp2 0.5s ease-out both; animation-delay: 0.35s;
 }
 @keyframes fadeUp2 {
   from { opacity: 0; transform: translateX(-50%) translateY(24px); }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 .action-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: flex; flex-direction: column; align-items: center;
   cursor: pointer;
   transition: transform 0.1s, filter 0.1s;
 }
-.action-btn:active {
-  transform: scale(0.90);
-  filter: brightness(0.84);
-}
-.action-btn img {
-  width: 90px;
-  height: 90px;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+.action-btn:active { transform: scale(0.90); filter: brightness(0.84); }
+.action-btn > img {
+  width: 90px; height: 90px; object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
 }
 
-/* ═══════════════════════════════════════════
-   FADE OVERLAY (screen transitions)
-   ═══════════════════════════════════════════ */
+/* ── Tambah Foto custom button ── */
+.btn-tambah-foto {
+  width: 90px; height: 90px;
+  background: linear-gradient(160deg, #2e2e3e 0%, #1a1a28 100%);
+  border-radius: 16px;
+  border: 2px solid rgba(120,80,220,0.4);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+}
+.btn-tf-icon { width: 42px; height: 42px; }
+.btn-tf-icon svg { width: 100%; height: 100%; }
+.btn-tf-label {
+  font-size: 10px; color: #fff; text-align: center;
+  line-height: 1.2; letter-spacing: 0.5px;
+  font-family: 'Fredoka One', sans-serif;
+}
+
+/* ══════════════════════════════════════════
+   BOTTOM SHEET MODALS
+══════════════════════════════════════════ */
+.sheet-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.55);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 50;
+  backdrop-filter: blur(2px);
+}
+.sheet-overlay.open { opacity: 1; pointer-events: all; }
+
+.bottom-sheet {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(175deg, #1e0848 0%, #130230 100%);
+  border-radius: 26px 26px 0 0;
+  padding: 12px 20px 36px;
+  transform: translateY(100%);
+  transition: transform 0.42s cubic-bezier(0.34,1.1,0.64,1);
+  z-index: 51;
+  border-top: 2px solid rgba(160,90,255,0.35);
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.6);
+}
+.bottom-sheet.open { transform: translateY(0); }
+
+.sheet-handle {
+  width: 44px; height: 4px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 999px;
+  margin: 0 auto 14px;
+}
+.sheet-title {
+  font-size: 19px; color: #fff;
+  text-align: center; margin-bottom: 18px;
+  -webkit-text-stroke: 3px #1a0040;
+  paint-order: stroke fill;
+}
+
+/* ── Color grid ── */
+.color-grid {
+  display: flex; justify-content: center;
+  gap: 10px; flex-wrap: wrap;
+}
+
+.color-option {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer; padding: 10px 8px;
+  border-radius: 18px;
+  border: 2.5px solid transparent;
+  background: rgba(255,255,255,0.04);
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  min-width: 74px;
+}
+.color-option:active { transform: scale(0.93); }
+.color-option.selected {
+  border-color: #ffc200;
+  background: rgba(255,194,0,0.12);
+}
+
+/* Samsak thumbnail */
+.color-thumb-samsak {
+  width: 58px; height: 88px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Glove color swatch */
+.color-swatch-wrap {
+  width: 58px; height: 88px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+}
+.glove-icon {
+  font-size: 36px; line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+.glove-swatch {
+  width: 36px; height: 12px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255,255,255,0.2);
+}
+
+.color-label {
+  font-size: 12px; color: #fff;
+  -webkit-text-stroke: 2px #1a0040;
+  paint-order: stroke fill;
+  letter-spacing: 0.3px;
+}
+.checkmark {
+  font-size: 14px; color: #ffc200;
+  min-height: 18px;
+  display: flex; align-items: center;
+}
+
+/* ── File input hidden ── */
+#photoInput { display: none; }
+
+/* ── Fade overlay ── */
 .fade-overlay {
+  position: absolute; inset: 0; background: #000;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s ease; z-index: 99;
+}
+.fade-overlay.on { opacity: 1; pointer-events: all; }
+
+
+/* ── Music toggle button ── */
+.music-btn {
   position: absolute;
-  inset: 0;
-  background: #000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-  z-index: 99;
+  top: 18px; right: 18px;
+  width: 46px; height: 46px;
+  border-radius: 14px;
+  background: rgba(10, 0, 40, 0.65);
+  border: 2px solid rgba(140, 80, 255, 0.45);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.12s, filter 0.12s, border-color 0.3s, background 0.3s;
 }
-.fade-overlay.on {
-  opacity: 1;
-  pointer-events: all;
+.music-btn:active { transform: scale(0.91); filter: brightness(0.82); }
+.music-btn.muted {
+  background: rgba(60, 0, 0, 0.55);
+  border-color: rgba(255, 80, 80, 0.4);
 }
+.music-icon {
+  width: 24px; height: 24px;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+.music-icon svg { width: 100%; height: 100%; }
+
+@keyframes musicPulse {
+  0%, 100% { box-shadow: 0 4px 14px rgba(0,0,0,0.45), 0 0 0 0 rgba(160,80,255,0.4); }
+  50%       { box-shadow: 0 4px 14px rgba(0,0,0,0.45), 0 0 0 7px rgba(160,80,255,0); }
+}
+.music-btn.playing { animation: musicPulse 2s ease-in-out infinite; }

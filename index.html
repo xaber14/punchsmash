@@ -20,11 +20,9 @@
   ══════════════════════════════════════ -->
   <div class="screen active" id="splash">
     <img class="bg" src="assets/bg-splash.png" alt="Splash Background">
-
     <div class="mascot-wrap">
       <img src="assets/mascot.png" alt="Punch Smash Mascot">
     </div>
-
     <div class="loading-section">
       <div class="loading-label" id="loadingText">LOADING...</div>
       <div class="bar-outer">
@@ -41,32 +39,32 @@
   <div class="screen" id="home">
     <img class="bg" src="assets/bg-home.png" alt="Home Background">
 
-    <!-- Top bar: Settings + Coin -->
-    <div class="top-bar">
-      <div class="icon-btn" id="btnSettings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06
-                   a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09
-                   A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83
-                   l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09
-                   A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83
-                   l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09
-                   a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83
-                   l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09
-                   a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
+    <!-- Music toggle button -->
+    <div class="music-btn" id="musicBtn">
+      <div class="music-icon on" id="musicIcon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/></svg>
       </div>
-      <div class="coin-pill">
-        <div class="coin-icon">⭐</div>
-        <span class="coin-count" id="coinCount">0</span>
+      <div class="music-icon off" id="musicIconOff" style="display:none">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z" opacity="0.3"/><line x1="2" y1="2" x2="22" y2="22" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
       </div>
     </div>
 
-    <!-- Mascot -->
-    <div class="mascot-home">
-      <img src="assets/mascot.png" alt="Punch Smash Mascot">
+    <!-- Samsak (pendulum pivot from top) -->
+    <div class="samsak-anchor">
+      <div class="samsak-wrap">
+        <img src="assets/samsak.png" id="samsakImg" alt="Samsak Tinju">
+      </div>
+      <!-- Photo sticker sticks to samsak body -->
+      <div class="samsak-sticker" id="samsakSticker">
+        <div class="tape tape-tl"></div>
+        <div class="tape tape-tr"></div>
+        <div class="tape tape-bl"></div>
+        <div class="tape tape-br"></div>
+        <div class="photo-frame">
+          <img id="stickerImg" src="" alt="Foto">
+        </div>
+        <button class="sticker-remove" id="stickerRemove">✕</button>
+      </div>
     </div>
 
     <!-- Play button -->
@@ -82,14 +80,48 @@
       <div class="action-btn" id="btnSarung">
         <img src="assets/btn-sarung.png" alt="Sarung Tinju">
       </div>
-      <div class="action-btn" id="btnBg">
-        <img src="assets/btn-bg.png" alt="Background">
+      <!-- Tambah Foto — CSS button replacing bg asset -->
+      <div class="action-btn" id="btnTambahFoto">
+        <div class="btn-tambah-foto">
+          <div class="btn-tf-icon">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="10" width="32" height="22" rx="3" fill="#4aaef5" stroke="#2080cc" stroke-width="1.5"/>
+              <circle cx="14" cy="19" r="4" fill="#ffe566"/>
+              <path d="M4 26 l9-8 7 6 5-4 11 8" fill="#3db56e" stroke="none"/>
+              <path d="M4 26 l9-8 7 6 5-4 11 8 V32 H4Z" fill="#3db56e"/>
+              <circle cx="31" cy="10" r="7" fill="#22c55e" stroke="#166534" stroke-width="1.5"/>
+              <path d="M31 6.5 V13.5 M27.5 10 H34.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="btn-tf-label">TAMBAH<br>FOTO</span>
+        </div>
       </div>
     </div>
+
+    <!-- Sheet overlay backdrop -->
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+
+    <!-- ── Samsak Color Sheet ── -->
+    <div class="bottom-sheet" id="sheetSamsak">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">🥊 Pilih Warna Samsak</div>
+      <div class="color-grid" id="samsakColorGrid"></div>
+    </div>
+
+    <!-- ── Sarung Tinju Color Sheet ── -->
+    <div class="bottom-sheet" id="sheetSarung">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">🧤 Pilih Warna Sarung Tinju</div>
+      <div class="color-grid" id="sarungColorGrid"></div>
+    </div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="photoInput" accept="image/*">
   </div>
 
 </div>
 
+<script src="music.js"></script>
 <script src="main.js"></script>
 </body>
 </html>
