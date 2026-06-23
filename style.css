@@ -1,0 +1,326 @@
+/* ═══════════════════════════════════════════
+   PUNCH SMASH — Main Stylesheet
+   ═══════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: 'Fredoka One', 'Arial Black', Arial, sans-serif;
+}
+
+/* ═══════════════════════════════════════════
+   PHONE SHELL
+   ═══════════════════════════════════════════ */
+.phone-shell {
+  width: 390px;
+  height: 844px;
+  max-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+}
+
+/* ═══════════════════════════════════════════
+   SCREEN MANAGEMENT
+   ═══════════════════════════════════════════ */
+.screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ═══════════════════════════════════════════
+   SPLASH SCREEN
+   ═══════════════════════════════════════════ */
+#splash .bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mascot-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 310px;
+  height: 310px;
+  animation:
+    mascotIn 0.7s ease-out both,
+    mascotFloat 2.2s ease-in-out infinite;
+  animation-delay: 0s, 0.7s;
+}
+.mascot-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.5));
+}
+
+@keyframes mascotIn {
+  from { opacity: 0; transform: translate(-50%, -46%) scale(0.85); }
+  to   { opacity: 1; transform: translate(-50%, -56%) scale(1); }
+}
+@keyframes mascotFloat {
+  0%,100% { transform: translate(-50%, -56%) translateY(0px)    rotate(0deg); }
+  25%     { transform: translate(-50%, -56%) translateY(-10px)  rotate(-1deg); }
+  50%     { transform: translate(-50%, -56%) translateY(-14px)  rotate(0deg); }
+  75%     { transform: translate(-50%, -56%) translateY(-10px)  rotate(1deg); }
+}
+
+.loading-section {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: fadeUp 0.6s ease-out both;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.loading-label {
+  font-size: 26px;
+  color: #fff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  -webkit-text-stroke: 6px #2a0a5e;
+  paint-order: stroke fill;
+}
+
+.bar-outer {
+  width: 100%;
+  height: 34px;
+  border-radius: 999px;
+  background: #1a0040;
+  padding: 3px;
+  box-shadow:
+    0 0 0 3px #7b3fe4,
+    0 0 0 5px #1a0040,
+    inset 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+.bar-track {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #888 0%, #555 40%, #444 60%, #666 100%);
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.7);
+}
+.bar-fill {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0) 40%),
+    linear-gradient(180deg, #ffe066 0%, #ffc200 35%, #e09000 65%, #ffc200 85%, #ffe580 100%);
+  box-shadow:
+    inset 0 3px 5px rgba(255,255,255,0.4),
+    inset 0 -2px 4px rgba(0,0,0,0.2);
+}
+
+/* ═══════════════════════════════════════════
+   HOMEPAGE
+   ═══════════════════════════════════════════ */
+#home .bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* Top bar */
+.top-bar {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  padding: 0 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.icon-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(10, 0, 40, 0.60);
+  border: 2px solid rgba(140, 80, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  transition: transform 0.1s, filter 0.1s;
+}
+.icon-btn:active {
+  transform: scale(0.92);
+  filter: brightness(0.82);
+}
+.icon-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.coin-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(10, 0, 40, 0.60);
+  border: 2px solid rgba(140, 80, 255, 0.45);
+  border-radius: 999px;
+  padding: 5px 14px 5px 7px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+.coin-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe566, #f5a800);
+  border: 2px solid #b87800;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.coin-count {
+  font-size: 18px;
+  color: #fff;
+  -webkit-text-stroke: 3px #2a0a5e;
+  paint-order: stroke fill;
+}
+
+/* Mascot on home */
+.mascot-home {
+  position: absolute;
+  bottom: 248px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 210px;
+  height: 210px;
+  animation: mascotHomeFloat 2.4s ease-in-out infinite;
+}
+.mascot-home img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.45));
+}
+@keyframes mascotHomeFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(-10px); }
+}
+
+/* Play button */
+.btn-play {
+  position: absolute;
+  bottom: 170px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  cursor: pointer;
+  animation: btnPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 0.2s;
+  transition: transform 0.1s, filter 0.1s;
+}
+@keyframes btnPop {
+  from { opacity: 0; transform: translateX(-50%) scale(0.7); }
+  to   { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+.btn-play:active {
+  transform: translateX(-50%) scale(0.93);
+  filter: brightness(0.86);
+}
+.btn-play img {
+  width: 100%;
+  display: block;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
+}
+
+/* Bottom 3 action buttons */
+.bottom-actions {
+  position: absolute;
+  bottom: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  animation: fadeUp2 0.5s ease-out both;
+  animation-delay: 0.35s;
+}
+@keyframes fadeUp2 {
+  from { opacity: 0; transform: translateX(-50%) translateY(24px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.1s;
+}
+.action-btn:active {
+  transform: scale(0.90);
+  filter: brightness(0.84);
+}
+.action-btn img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+}
+
+/* ═══════════════════════════════════════════
+   FADE OVERLAY (screen transitions)
+   ═══════════════════════════════════════════ */
+.fade-overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 99;
+}
+.fade-overlay.on {
+  opacity: 1;
+  pointer-events: all;
+}
