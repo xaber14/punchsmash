@@ -3,6 +3,35 @@
    ═══════════════════════════════════════════ */
 
 /* ──────────────────────────────────────────
+   RESPONSIVE SCALE — fit game to any screen
+   Design size: 390 × 844 px
+──────────────────────────────────────────── */
+const DESIGN_W = 390;
+const DESIGN_H = 844;
+const shell = document.querySelector('.phone-shell');
+
+function fitToViewport() {
+  // visualViewport gives the real visible area on mobile
+  // (excludes browser chrome, keyboard, etc.)
+  const vw = window.visualViewport
+    ? window.visualViewport.width
+    : window.innerWidth;
+  const vh = window.visualViewport
+    ? window.visualViewport.height
+    : window.innerHeight;
+
+  const scale = Math.min(vw / DESIGN_W, vh / DESIGN_H);
+  shell.style.transform = `scale(${scale})`;
+}
+
+fitToViewport();
+window.addEventListener('resize', fitToViewport);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', fitToViewport);
+  window.visualViewport.addEventListener('scroll', fitToViewport);
+}
+
+/* ──────────────────────────────────────────
    SPLASH: Loading Bar → Homepage Transition
 ──────────────────────────────────────────── */
 const barFill     = document.getElementById('barFill');
