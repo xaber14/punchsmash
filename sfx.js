@@ -89,6 +89,55 @@ const SFX = (() => {
     snap.stop(now + 0.02);
   }
 
+  /* ── Punch impact: deep thud + leather slap ── */
+  function punch(power = 1) {
+    _init();
+    if (ctx.state === 'suspended') ctx.resume();
+    const now = ctx.currentTime;
+
+    // Layer 1: deep body thud (low sine drop)
+    const osc = ctx.createOscillator();
+    const og  = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(180 * power, now);
+    osc.frequency.exponentialRampToValueAtTime(45, now + 0.18);
+    og.gain.setValueAtTime(0, now);
+    og.gain.linearRampToValueAtTime(0.9, now + 0.005);
+    og.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+    osc.connect(og); og.connect(ctx.destination);
+    osc.start(now); osc.stop(now + 0.24);
+
+    // Layer 2: leather slap (filtered noise burst)
+    const dur = 0.13;
+    const len = Math.ceil(ctx.sampleRate * dur);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d   = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random()*2-1) * (1 - i/len);
+    const ns = ctx.createBufferSource(); ns.buffer = buf;
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 1400; bp.Q.value = 1.2;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.6, now);
+    ng.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    ns.connect(bp); bp.connect(ng); ng.connect(ctx.destination);
+    ns.start(now); ns.stop(now + dur);
+
+    // Layer 3: high snap for power punches
+    if (power > 1.2) {
+      const len2 = Math.ceil(ctx.sampleRate * 0.04);
+      const buf2 = ctx.createBuffer(1, len2, ctx.sampleRate);
+      const d2 = buf2.getChannelData(0);
+      for (let i = 0; i < len2; i++) d2[i] = Math.random()*2-1;
+      const snap = ctx.createBufferSource(); snap.buffer = buf2;
+      const hp = ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=5000;
+      const sg = ctx.createGain();
+      sg.gain.setValueAtTime(0.5, now);
+      sg.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      snap.connect(hp); hp.connect(sg); sg.connect(ctx.destination);
+      snap.start(now); snap.stop(now + 0.05);
+    }
+  }
+
   /* ── Attach to every clickable element ── */
   function attachToAll() {
     const selectors = [
@@ -110,7 +159,7 @@ const SFX = (() => {
     }, { passive: true });
   }
 
-  return { click, attachToAll };
+  return { click, punch, attachToAll };
 })();
 
 // Init after DOM ready

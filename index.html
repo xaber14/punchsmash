@@ -94,14 +94,14 @@
     <!-- ── Samsak Color Sheet ── -->
     <div class="bottom-sheet" id="sheetSamsak">
       <div class="sheet-handle"></div>
-      <div class="sheet-title">🥊 Pilih Warna Samsak</div>
+      <div class="sheet-title">Pilih Warna Samsak</div>
       <div class="color-grid" id="samsakColorGrid"></div>
     </div>
 
     <!-- ── Sarung Tinju Color Sheet ── -->
     <div class="bottom-sheet" id="sheetSarung">
       <div class="sheet-handle"></div>
-      <div class="sheet-title">🧤 Pilih Warna Sarung Tinju</div>
+      <div class="sheet-title">Pilih Warna Sarung Tinju</div>
       <div class="color-grid" id="sarungColorGrid"></div>
     </div>
 
@@ -109,9 +109,57 @@
     <input type="file" id="photoInput" accept="image/*">
   </div>
 
+  <!-- ══════════════════════════════════════
+       GAMEPLAY SCREEN
+  ══════════════════════════════════════ -->
+  <div class="screen" id="game">
+    <img class="bg" src="assets/bg-home.png" alt="Gym Background">
+    <div class="game-vignette"></div>
+
+    <!-- Back button (top-left) -->
+    <div class="back-btn" id="backBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 5l-7 7 7 7"/>
+      </svg>
+    </div>
+
+    <!-- Combo indicator -->
+    <div class="combo-display" id="comboDisplay">
+      <span class="combo-word">COMBO!</span>
+      <span class="combo-mult" id="comboMult">x2</span>
+    </div>
+
+    <!-- ── Samsak (target) ── -->
+    <div class="game-samsak-anchor" id="gameSamsakAnchor">
+      <div class="game-samsak-wrap" id="gameSamsakWrap">
+        <img src="assets/samsak.png" id="gameSamsakImg" alt="Samsak">
+      </div>
+      <!-- Photo sticker (carried over if user added one) -->
+      <div class="game-sticker" id="gameSticker" style="display:none">
+        <div class="tape tape-tl"></div>
+        <div class="tape tape-tr"></div>
+        <div class="tape tape-bl"></div>
+        <div class="tape tape-br"></div>
+        <div class="photo-frame"><img id="gameStickerImg" src="" alt=""></div>
+      </div>
+    </div>
+
+    <!-- Hit feedback text layer -->
+    <div class="hit-text-layer" id="hitTextLayer"></div>
+
+    <!-- ── Glove + arm (first person, FPS) ── -->
+    <div class="glove-arm" id="gloveArm">
+      <img src="assets/glove-arm.svg" alt="Boxing Glove">
+    </div>
+
+    <!-- Tap catcher (whole screen) -->
+    <div class="tap-catcher" id="tapCatcher"></div>
+  </div>
+
 </div>
 
 <script src="sfx.js"></script>
 <script src="main.js"></script>
+<script src="gameplay.js"></script>
 </body>
 </html>

@@ -1,0 +1,77 @@
+<svg viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="armG" x1="0.3" y1="0" x2="0.7" y2="1">
+      <stop offset="0" stop-color="#e8b888"/>
+      <stop offset="0.5" stop-color="#d49870"/>
+      <stop offset="1" stop-color="#c08050"/>
+    </linearGradient>
+    <linearGradient id="gloveG" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#ff4a3a"/>
+      <stop offset="0.4" stop-color="#e0201a"/>
+      <stop offset="1" stop-color="#9a0e0a"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="0.38" cy="0.28" r="0.65">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="0.45" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cuffG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff8ee"/>
+      <stop offset="1" stop-color="#d8c8a8"/>
+    </linearGradient>
+    <filter id="gloveShadow" x="-20%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <!-- Arm / forearm — centered, comes from bottom center -->
+  <path d="M108 380 Q104 300 114 272 Q126 248 160 244 Q194 240 208 264 Q220 290 216 380 Z"
+        fill="url(#armG)" stroke="#a07040" stroke-width="2.5"/>
+  <!-- Arm shadow side -->
+  <path d="M108 380 Q104 300 114 272 Q120 256 140 250 L148 258 Q128 268 120 296 L116 380 Z"
+        fill="#00000020"/>
+
+  <!-- Wrist cuff (white wrap) -->
+  <path d="M106 268 Q160 252 214 264 L218 300 Q162 282 104 296 Z"
+        fill="url(#cuffG)" stroke="#c8b888" stroke-width="2.5"/>
+  <path d="M108 284 Q162 268 214 280" fill="none" stroke="#b8a878" stroke-width="2" opacity="0.7"/>
+
+  <!-- GLOVE BODY — FPS perspective: back of glove, knuckles at top facing forward -->
+  <path d="M62  258
+           Q48  200 58  152
+           Q72  98  120 72
+           Q160 50  200 66
+           Q242 84  258 132
+           Q272 178 262 228
+           Q250 262 210 276
+           Q166 288 118 278
+           Q82  268 62  258 Z"
+        fill="url(#gloveG)" stroke="#7a0c08" stroke-width="5" filter="url(#gloveShadow)"/>
+
+  <!-- Thumb (left side) -->
+  <path d="M62 258
+           Q34 240 32 204
+           Q32 172 54 162
+           Q72 154 84 170
+           Q80 198 74 228 Z"
+        fill="url(#gloveG)" stroke="#7a0c08" stroke-width="4"/>
+
+  <!-- Knuckle ridge — top of glove facing samsak -->
+  <path d="M102 80 Q130 62 165 58 Q196 56 222 72"
+        fill="none" stroke="#c01410" stroke-width="7" stroke-linecap="round" opacity="0.7"/>
+  <!-- Knuckle bumps -->
+  <circle cx="120" cy="74" r="10" fill="#c01810" opacity="0.5"/>
+  <circle cx="148" cy="64" r="11" fill="#c01810" opacity="0.5"/>
+  <circle cx="178" cy="62" r="10" fill="#c01810" stroke="#9a0c08" stroke-width="2" opacity="0.5"/>
+  <circle cx="206" cy="70" r="9"  fill="#c01810" opacity="0.45"/>
+
+  <!-- Center seam -->
+  <path d="M160 68 Q156 168 152 278" fill="none" stroke="#8a0c08" stroke-width="3" opacity="0.45"/>
+
+  <!-- Gloss highlight -->
+  <ellipse cx="172" cy="168" rx="78" ry="86" fill="url(#shine)"/>
+
+  <!-- Bottom strap -->
+  <path d="M108 272 Q162 288 216 268 L222 290 Q166 308 104 292 Z"
+        fill="#b01410" stroke="#7a0c08" stroke-width="3"/>
+</svg>

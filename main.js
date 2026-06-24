@@ -20,10 +20,10 @@ function fitToViewport() {
     shell.style.transform = '';
     return;
   }
-  // Desktop: render at full design size, scale down only if needed.
+  // Desktop: scale to fit viewport height, capped so width never exceeds viewport.
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const scale = Math.min(vw / DESIGN_W, vh / DESIGN_H, 1);
+  const scale = Math.min(vw / DESIGN_W, vh / DESIGN_H);
   shell.style.transform = `scale(${scale})`;
 }
 
@@ -83,6 +83,32 @@ setTimeout(runLoadingBar, 500);
 
 
 /* ──────────────────────────────────────────
+   SCREEN NAVIGATION (Home ⇄ Gameplay)
+──────────────────────────────────────────── */
+const gameEl = document.getElementById('game');
+
+function switchScreen(fromEl, toEl, onMid) {
+  fadeOverlay.classList.add('on');
+  setTimeout(() => {
+    fromEl.classList.remove('active');
+    toEl.classList.add('active');
+    if (onMid) onMid();
+    setTimeout(() => fadeOverlay.classList.remove('on'), 80);
+  }, 380);
+}
+
+window.goToGame = function () {
+  switchScreen(homeEl, gameEl, () => {
+    if (window.Gameplay) window.Gameplay.start();
+  });
+};
+
+window.goToHome = function () {
+  switchScreen(gameEl, homeEl);
+};
+
+
+/* ──────────────────────────────────────────
    HOMEPAGE STATE
 ──────────────────────────────────────────── */
 let selectedSamsakColor = 'red';
@@ -90,6 +116,19 @@ let selectedGloveColor  = 'red';
 
 const samsakImg     = document.getElementById('samsakImg');
 const sheetOverlay  = document.getElementById('sheetOverlay');
+
+/* ── Mulai Main button press effect ── */
+const btnPlay = document.getElementById('btnPlay');
+function addPressEffect(el) {
+  el.addEventListener('pointerdown', () => el.classList.add('pressed'),    { passive: true });
+  el.addEventListener('pointerup',   () => el.classList.remove('pressed'), { passive: true });
+  el.addEventListener('pointerout',  () => el.classList.remove('pressed'), { passive: true });
+  el.addEventListener('pointercancel', () => el.classList.remove('pressed'), { passive: true });
+}
+addPressEffect(btnPlay);
+btnPlay.addEventListener('click', () => {
+  window.goToGame();
+});
 
 
 /* ──────────────────────────────────────────
@@ -121,7 +160,7 @@ sheetOverlay.addEventListener('click', closeSheet);
 const SAMSAK_COLORS = [
   { id: 'red',    label: 'Merah',  filter: 'none' },
   { id: 'blue',   label: 'Biru',   filter: 'hue-rotate(200deg) saturate(1.5)' },
-  { id: 'yellow', label: 'Kuning', filter: 'hue-rotate(45deg) saturate(3) brightness(1.05)' },
+  { id: 'yellow', label: 'Kuning', filter: 'hue-rotate(170deg) saturate(2.5) brightness(1.15)' },
   { id: 'green',  label: 'Hijau',  filter: 'hue-rotate(120deg) saturate(1.6)' },
 ];
 
