@@ -619,27 +619,60 @@ body {
   100% { opacity: 0;   transform: translate(-50%,-50%) scale(1.4) rotate(40deg); }
 }
 
-/* ── Glove — FPS depth perspective ──
-   Centered at bottom, punches FORWARD (scale-up) not upward */
-.glove-arm {
+/* ── Two gloves — FPS bottom corners ── */
+.glove-left,
+.glove-right {
   position: absolute;
-  bottom: -60px;
-  left: 50%;
-  width: 300px;
-  /* Rest: centered, at 1× scale = glove at natural arm-length distance */
-  transform: translateX(-50%) scale(1);
-  transform-origin: bottom center;
+  bottom: 70px;
+  width: 170px;
   z-index: 12;
   pointer-events: none;
   will-change: transform;
-  filter: drop-shadow(0 -6px 22px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 -4px 18px rgba(0,0,0,0.55));
 }
-.glove-arm img { width: 100%; display: block; }
+.glove-left {
+  left: -28px;
+  transform-origin: bottom left;
+  transform: translateY(0) scale(1);
+}
+.glove-right {
+  right: -28px;
+  transform-origin: bottom right;
+  transform: translateY(0) scale(1);
+}
+.glove-left img,
+.glove-right img { width: 100%; display: block; }
 
-/* Tap catcher — full gameplay area (no HUD except back btn) */
-.tap-catcher {
+/* ── PUKUL button ── */
+.btn-pukul {
   position: absolute;
-  inset: 0;
-  top: 80px;       /* clear back button */
-  z-index: 13;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: 180px; height: 58px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  /* Gold/orange game-style */
+  background: linear-gradient(180deg, #ffe84a 0%, #ffb800 40%, #e08000 100%);
+  border-top: 3px solid #fff5a0;
+  border-bottom: 5px solid #8a4800;
+  box-shadow:
+    0 0 0 3px #7a3800,
+    0 8px 20px rgba(0,0,0,0.5);
+  transition: transform 0.08s ease, filter 0.08s ease, border-bottom-width 0.08s ease;
+  user-select: none;
+}
+.btn-pukul span {
+  font-size: 26px; color: #fff;
+  -webkit-text-stroke: 5px #7a3000;
+  paint-order: stroke fill;
+  filter: drop-shadow(0 2px 0 #7a3000);
+  letter-spacing: 2px;
+}
+.btn-pukul.pressed {
+  transform: translateX(-50%) translateY(3px);
+  border-bottom-width: 2px;
+  filter: brightness(0.88);
 }

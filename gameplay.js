@@ -1,24 +1,24 @@
 /* ═══════════════════════════════════════════
    PUNCH SMASH — Gameplay Engine
-   · Unlimited session (ended only by Back)
-   · FPS-style depth punch (scale in/out)
-   · Samsak reacts with pendulum + depth squish
-   · Hit-text feedback + combo counter
+   · Two FPS gloves, alternating left/right
+   · Press "PUKUL" button to punch
+   · Smooth depth animation (scale + translate)
    ═══════════════════════════════════════════ */
 
 const Gameplay = (() => {
 
-  /* ── element refs ── */
-  let elGame, elSamsakAnchor, elSamsakWrap, elGlove,
-      elTapCatcher, elHitLayer, elCombo, elComboMult;
+  /* ── refs ── */
+  let elGame, elSamsakAnchor, elSamsakWrap,
+      elGloveL, elGloveR, elBtnPukul,
+      elHitLayer, elCombo, elComboMult;
 
   /* ── state ── */
-  let running     = false;
-  let combo       = 0;
-  let comboTimer  = null;
-  let busy        = false;
+  let running    = false;
+  let nextHand   = 'left';   // alternates each punch
+  let busy       = false;
+  let combo      = 0;
+  let comboTimer = null;
 
-  /* ── hit word pool ── */
   const WORDS = [
     { t: 'GOOD!',    c: '#7CFC3A' },
     { t: 'NICE!',    c: '#41d6ff' },
@@ -35,21 +35,20 @@ const Gameplay = (() => {
     elGame         = document.getElementById('game');
     elSamsakAnchor = document.getElementById('gameSamsakAnchor');
     elSamsakWrap   = document.getElementById('gameSamsakWrap');
-    elGlove        = document.getElementById('gloveArm');
-    elTapCatcher   = document.getElementById('tapCatcher');
+    elGloveL       = document.getElementById('gloveLeft');
+    elGloveR       = document.getElementById('gloveRight');
+    elBtnPukul     = document.getElementById('btnPukul');
     elHitLayer     = document.getElementById('hitTextLayer');
     elCombo        = document.getElementById('comboDisplay');
     elComboMult    = document.getElementById('comboMult');
   }
 
-  /* ── carry over customisation from Homepage ── */
+  /* ── carry over customisation ── */
   function _applyCustom() {
-    // samsak color filter
     const src = document.getElementById('samsakImg');
     const dst = document.getElementById('gameSamsakImg');
     if (src && dst) dst.style.filter = src.style.filter || '';
 
-    // photo sticker
     const homeSticker = document.getElementById('samsakSticker');
     const homeImg     = document.getElementById('stickerImg');
     const gameSticker = document.getElementById('gameSticker');
@@ -64,7 +63,6 @@ const Gameplay = (() => {
 
   /* ── idle samsak sway ── */
   function _idleSway() {
-    // Cancel any previous animation
     elSamsakAnchor.getAnimations().forEach(a => a.cancel());
     elSamsakAnchor.animate(
       [
@@ -77,70 +75,80 @@ const Gameplay = (() => {
   }
 
   /* ════════════════════════════════════════
-     PUNCH — the core interaction
+     PUNCH
   ════════════════════════════════════════ */
-  function punch(clientX) {
+  function punch() {
     if (!running || busy) return;
     busy = true;
 
-    // Which side did the tap come from?
-    const rect  = elGame.getBoundingClientRect();
-    const relX  = clientX != null ? (clientX - rect.left) / rect.width : 0.5;
-    const side  = relX < 0.5 ? -1 : 1;   // -1 = left tap, +1 = right tap
-    const lean  = (relX - 0.5) * 30;     // slight horizontal drift
+    const isLeft = nextHand === 'left';
+    nextHand = isLeft ? 'right' : 'left';
+
+    const glove = isLeft ? elGloveL : elGloveR;
 
     /* ── SFX ── */
     SFX.punch(1);
 
-    /* ── GLOVE: FPS depth thrust ──
-       Scale 1→1.55 (rushes toward samsak / camera)
-       Small translateY for natural arm extension arc
-       Then pulls back to rest */
-    const REST = `translateX(-50%) scale(1)`;
-    const PUSH = `translateX(calc(-50% + ${lean * 0.3}px)) translateY(-90px) scale(1.55)`;
-    const PEAK = `translateX(calc(-50% + ${lean * 0.3}px)) translateY(-100px) scale(1.60)`;
+    /* ── Button press visual feedback ── */
+    elBtnPukul.classList.add('pressed');
+    setTimeout(() => elBtnPukul.classList.remove('pressed'), 140);
 
-    elGlove.animate(
+    /* ── GLOVE animation ──
+       Left:  punches up-right toward samsak center (translateX positive, scale up)
+       Right: punches up-left toward samsak center  (translateX negative, scale up)
+       Scale increase = depth/forward rush (FPS illusion) */
+    const xDrift = isLeft ? 55 : -55;
+    const REST   = 'translateY(0px) translateX(0px) scale(1)';
+    const RUSH   = `translateY(-195px) translateX(${xDrift}px) scale(1.45)`;
+    const IMPACT = `translateY(-215px) translateX(${xDrift * 0.9}px) scale(1.50)`;
+    const PULL   = `translateY(-80px)  translateX(${xDrift * 0.3}px) scale(1.18)`;
+
+    glove.animate(
       [
-        { transform: REST,  offset: 0,    easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)' },
-        { transform: PUSH,  offset: 0.28, easing: 'cubic-bezier(0.4, 0, 0.6, 1)'   },
-        { transform: PEAK,  offset: 0.36 },
-        { transform: REST,  offset: 1,    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'   },
+        { transform: REST,   offset: 0,    easing: 'cubic-bezier(0.15, 0.8, 0.25, 1)' },
+        { transform: RUSH,   offset: 0.26, easing: 'cubic-bezier(0.4,  0,   0.2,  1)' },
+        { transform: IMPACT, offset: 0.34 },
+        { transform: PULL,   offset: 0.55, easing: 'cubic-bezier(0.4,  0,   0.4,  1)' },
+        { transform: REST,   offset: 1,    easing: 'cubic-bezier(0.4,  0,   0.2,  1)' },
       ],
-      { duration: 360, fill: 'forwards' }
+      { duration: 420, fill: 'forwards' }
     );
 
-    /* ── SAMSAK: FPS reaction ──
-       Swings AWAY (back) then returns like a pendulum.
-       In screen space: slight scale-down (receding) + rotation away from hit */
-    const swingDeg  = 14 * side;    // rotate toward the punch side
-    const swingBack = -swingDeg * 0.5;
+    /* ── SAMSAK reaction ──
+       Swings away from the punch side, then pendulum back.
+       Scale dips slightly on impact (depth compression). */
+    const swingDir = isLeft ? 1 : -1;   // left punch → swings right
+    const swing    = 15 * swingDir;
+    const bounce   = -swing * 0.48;
+    const settle1  =  swing * 0.20;
+    const settle2  = -swing * 0.07;
 
     elSamsakWrap.animate(
       [
-        { transform: 'translateX(-50%) rotate(0deg)  scale(1)',    offset: 0    },
-        { transform: `translateX(-50%) rotate(${swingDeg}deg) scale(0.94)`, offset: 0.20, easing: 'cubic-bezier(0.2,0.8,0.3,1)' },
-        { transform: `translateX(-50%) rotate(${swingBack}deg) scale(0.97)`, offset: 0.48 },
-        { transform: `translateX(-50%) rotate(${swingDeg*0.22}deg) scale(0.99)`, offset: 0.70 },
-        { transform: `translateX(-50%) rotate(${swingBack*0.08}deg) scale(1)`,   offset: 0.88 },
-        { transform: 'translateX(-50%) rotate(0deg)  scale(1)',    offset: 1    },
+        { transform: 'translateX(-50%) rotate(0deg)        scale(1)',    offset: 0    },
+        { transform: `translateX(-50%) rotate(${swing}deg) scale(0.93)`, offset: 0.20, easing: 'cubic-bezier(0.2,0.8,0.3,1)' },
+        { transform: `translateX(-50%) rotate(${swing * 1.05}deg) scale(0.92)`, offset: 0.28 },
+        { transform: `translateX(-50%) rotate(${bounce}deg) scale(0.97)`, offset: 0.50 },
+        { transform: `translateX(-50%) rotate(${settle1}deg) scale(0.99)`, offset: 0.70 },
+        { transform: `translateX(-50%) rotate(${settle2}deg) scale(1)`,   offset: 0.86 },
+        { transform: 'translateX(-50%) rotate(0deg)        scale(1)',    offset: 1    },
       ],
-      { duration: 780, easing: 'ease-out' }
+      { duration: 820, easing: 'ease-out' }
     );
 
     /* ── Register hit at impact frame ── */
-    setTimeout(() => _registerHit(), 130);
+    setTimeout(() => _onImpact(), 140);
 
     /* ── Release busy after glove retracts ── */
-    setTimeout(() => { busy = false; }, 260);
+    setTimeout(() => { busy = false; }, 310);
   }
 
-  /* ── Hit registration: combo + text + shake ── */
-  function _registerHit() {
+  /* ── On impact: feedback + combo ── */
+  function _onImpact() {
     combo++;
     _showCombo();
     _spawnHitText();
-    _shake();
+    _screenShake();
   }
 
   /* ── Combo display ── */
@@ -151,11 +159,10 @@ const Gameplay = (() => {
     }
     elComboMult.textContent = 'x' + combo;
     if (!elCombo.classList.contains('show')) {
-      elCombo.classList.remove('bump');
       elCombo.classList.add('show');
     } else {
       elCombo.classList.remove('bump');
-      void elCombo.offsetWidth;          // force reflow to restart animation
+      void elCombo.offsetWidth;
       elCombo.classList.add('bump');
     }
     clearTimeout(comboTimer);
@@ -165,26 +172,27 @@ const Gameplay = (() => {
     }, 1800);
   }
 
-  /* ── Spawn hit text + starburst ── */
+  /* ── Hit text + burst ── */
   function _spawnHitText() {
     const pick = WORDS[Math.floor(Math.random() * WORDS.length)];
-    const sz   = Math.min(72, 48 + combo * 1.8);
+    const sz   = Math.min(74, 50 + combo * 1.6);
 
     /* starburst */
     const burst = document.createElement('div');
     burst.className = 'hit-burst';
     burst.innerHTML = `
-      <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-        ${Array.from({length:14}).map((_,i) => {
-          const a  = (i/14)*Math.PI*2;
-          const a2 = a + Math.PI/14;
-          const r1 = 38, r2 = 96;
-          const x1 = 110+Math.cos(a)*r1,  y1 = 110+Math.sin(a)*r1;
-          const x2 = 110+Math.cos(a2)*r2, y2 = 110+Math.sin(a2)*r2;
-          const x3 = 110+Math.cos(a-Math.PI/14)*r2, y3 = 110+Math.sin(a-Math.PI/14)*r2;
+      <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+        ${Array.from({length: 14}).map((_, i) => {
+          const a  = (i / 14) * Math.PI * 2;
+          const a2 = a + Math.PI / 14;
+          const r1 = 38, r2 = 98;
+          const x1 = 110 + Math.cos(a) * r1,  y1 = 110 + Math.sin(a) * r1;
+          const x2 = 110 + Math.cos(a2) * r2, y2 = 110 + Math.sin(a2) * r2;
+          const x3 = 110 + Math.cos(a - Math.PI/14) * r2,
+                y3 = 110 + Math.sin(a - Math.PI/14) * r2;
           return `<polygon points="${x1},${y1} ${x2},${y2} ${x3},${y3}" fill="#ffd840"/>`;
         }).join('')}
-        <circle cx="110" cy="110" r="36" fill="#ffe060" opacity="0.7"/>
+        <circle cx="110" cy="110" r="34" fill="#ffe060" opacity="0.75"/>
       </svg>`;
     burst.style.animation = 'burstPop 0.52s ease-out forwards';
     elHitLayer.appendChild(burst);
@@ -196,18 +204,18 @@ const Gameplay = (() => {
     txt.textContent = pick.t;
     txt.style.color     = pick.c;
     txt.style.fontSize  = sz + 'px';
-    txt.style.animation = 'hitTextPop 0.88s ease-out forwards';
+    txt.style.animation = 'hitTextPop 0.90s ease-out forwards';
     elHitLayer.appendChild(txt);
-    setTimeout(() => txt.remove(), 900);
+    setTimeout(() => txt.remove(), 920);
   }
 
   /* ── Screen shake ── */
-  function _shake() {
+  function _screenShake() {
     elGame.animate(
       [
         { transform: 'translate(0,0)' },
         { transform: 'translate(5px,-3px)' },
-        { transform: 'translate(-4px,3px)' },
+        { transform: 'translate(-4px, 3px)' },
         { transform: 'translate(3px,-2px)' },
         { transform: 'translate(0,0)' },
       ],
@@ -218,22 +226,22 @@ const Gameplay = (() => {
   /* ════════════════════════════════════════
      PUBLIC API
   ════════════════════════════════════════ */
-
   function start() {
     if (!elGame) _cache();
 
-    running = true;
-    busy    = false;
-    combo   = 0;
+    running  = true;
+    busy     = false;
+    combo    = 0;
+    nextHand = 'left';
     elCombo.classList.remove('show', 'bump');
 
     _applyCustom();
     _idleSway();
 
-    /* Bind tap once */
-    if (!elTapCatcher._gpBound) {
-      elTapCatcher.addEventListener('pointerdown', e => punch(e.clientX), { passive: true });
-      elTapCatcher._gpBound = true;
+    /* Bind Pukul button (once) */
+    if (!elBtnPukul._bound) {
+      elBtnPukul.addEventListener('pointerdown', () => punch(), { passive: true });
+      elBtnPukul._bound = true;
     }
   }
 
@@ -241,12 +249,10 @@ const Gameplay = (() => {
     running = false;
     clearTimeout(comboTimer);
     combo = 0;
-    // Cancel samsak sway so it resets for homepage
     if (elSamsakAnchor) elSamsakAnchor.getAnimations().forEach(a => a.cancel());
   }
 
   return { start, stop };
-
 })();
 
 window.Gameplay = Gameplay;
