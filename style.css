@@ -14,7 +14,6 @@
 }
 
 html {
-  /* dvh = dynamic viewport height (accounts for browser chrome on mobile) */
   height: 100%;
   height: 100dvh;
 }
@@ -29,14 +28,15 @@ body {
   justify-content: center;
   overflow: hidden;
   font-family: 'Fredoka One', 'Arial Black', Arial, sans-serif;
-  /* Prevent any scrolling/bouncing on mobile */
   touch-action: none;
   overscroll-behavior: none;
 }
 
 /* ── PHONE SHELL ──
-   Fixed at design size 390×844.
-   JS scales it to fit any viewport. */
+   DESKTOP (default): fixed design size 390×844, centered.
+   JS only scales DOWN if the window is smaller than the design,
+   never scales it tiny — so desktop matches the original size.
+   MOBILE (media query below): fills the entire screen. */
 .phone-shell {
   width: 390px;
   height: 844px;
@@ -44,11 +44,24 @@ body {
   overflow: hidden;
   border-radius: 0;
   transform-origin: center center;
-  /* scale injected by JS */
   will-change: transform;
-  /* Safe-area insets for notched phones */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ── MOBILE: fill the whole screen, no side gaps ──
+   The background uses object-fit:cover so it always fills.
+   UI elements are centered + anchored to top/bottom, so they
+   adapt to any phone height automatically. */
+@media (max-width: 600px), (pointer: coarse) {
+  body {
+    align-items: stretch;
+    justify-content: stretch;
+  }
+  .phone-shell {
+    width: 100vw;
+    width: 100dvw;
+    height: 100dvh;
+    transform: none !important;
+  }
 }
 
 /* ── SCREEN MANAGEMENT ── */
@@ -443,35 +456,11 @@ body {
 .fade-overlay.on { opacity: 1; pointer-events: all; }
 
 
-/* ── Music toggle button ── */
-.music-btn {
-  position: absolute;
-  top: 18px; right: 18px;
-  width: 46px; height: 46px;
-  border-radius: 14px;
-  background: rgba(10, 0, 40, 0.65);
-  border: 2px solid rgba(140, 80, 255, 0.45);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  transition: transform 0.12s, filter 0.12s, border-color 0.3s, background 0.3s;
-}
-.music-btn:active { transform: scale(0.91); filter: brightness(0.82); }
-.music-btn.muted {
-  background: rgba(60, 0, 0, 0.55);
-  border-color: rgba(255, 80, 80, 0.4);
-}
-.music-icon {
-  width: 24px; height: 24px;
-  color: #fff;
-  display: flex; align-items: center; justify-content: center;
-}
-.music-icon svg { width: 100%; height: 100%; }
 
-@keyframes musicPulse {
-  0%, 100% { box-shadow: 0 4px 14px rgba(0,0,0,0.45), 0 0 0 0 rgba(160,80,255,0.4); }
-  50%       { box-shadow: 0 4px 14px rgba(0,0,0,0.45), 0 0 0 7px rgba(160,80,255,0); }
+/* ── Extra safety for very narrow phones (≤ 360px) ── */
+@media (max-width: 360px) {
+  .bottom-actions { gap: 10px; }
+  .action-btn > img,
+  .btn-tambah-foto { width: 84px; height: 84px; }
+  .samsak-wrap { width: 300px; }
 }
-.music-btn.playing { animation: musicPulse 2s ease-in-out infinite; }

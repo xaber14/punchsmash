@@ -3,24 +3,27 @@
    ═══════════════════════════════════════════ */
 
 /* ──────────────────────────────────────────
-   RESPONSIVE SCALE — fit game to any screen
-   Design size: 390 × 844 px
+   RESPONSIVE FIT
+   · Desktop  → keep fixed 390×844 design size,
+                only shrink if window is smaller.
+   · Mobile   → CSS fills the screen (100dvw × 100dvh),
+                so we clear any transform here.
 ──────────────────────────────────────────── */
 const DESIGN_W = 390;
 const DESIGN_H = 844;
 const shell = document.querySelector('.phone-shell');
+const mqMobile = window.matchMedia('(max-width: 600px), (pointer: coarse)');
 
 function fitToViewport() {
-  // visualViewport gives the real visible area on mobile
-  // (excludes browser chrome, keyboard, etc.)
-  const vw = window.visualViewport
-    ? window.visualViewport.width
-    : window.innerWidth;
-  const vh = window.visualViewport
-    ? window.visualViewport.height
-    : window.innerHeight;
-
-  const scale = Math.min(vw / DESIGN_W, vh / DESIGN_H);
+  if (mqMobile.matches) {
+    // Mobile: CSS handles full-screen fill — no JS scaling.
+    shell.style.transform = '';
+    return;
+  }
+  // Desktop: render at full design size, scale down only if needed.
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const scale = Math.min(vw / DESIGN_W, vh / DESIGN_H, 1);
   shell.style.transform = `scale(${scale})`;
 }
 
@@ -28,7 +31,9 @@ fitToViewport();
 window.addEventListener('resize', fitToViewport);
 if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', fitToViewport);
-  window.visualViewport.addEventListener('scroll', fitToViewport);
+}
+if (mqMobile.addEventListener) {
+  mqMobile.addEventListener('change', fitToViewport);
 }
 
 /* ──────────────────────────────────────────
@@ -70,12 +75,7 @@ function transitionToHome() {
   setTimeout(() => {
     splashEl.classList.remove('active');
     homeEl.classList.add('active');
-    setTimeout(() => {
-      fadeOverlay.classList.remove('on');
-      // Auto-start music when homepage appears
-      window.gameMusic.start();
-      updateMusicBtn(true);
-    }, 80);
+    setTimeout(() => fadeOverlay.classList.remove('on'), 80);
   }, 420);
 }
 
@@ -233,28 +233,4 @@ stickerRemove.addEventListener('click', (e) => {
 });
 
 
-/* ──────────────────────────────────────────
-   MUSIC TOGGLE
-──────────────────────────────────────────── */
-const musicBtn     = document.getElementById('musicBtn');
-const musicIconOn  = document.getElementById('musicIcon');
-const musicIconOff = document.getElementById('musicIconOff');
 
-function updateMusicBtn(playing) {
-  if (playing) {
-    musicBtn.classList.add('playing');
-    musicBtn.classList.remove('muted');
-    musicIconOn.style.display  = 'flex';
-    musicIconOff.style.display = 'none';
-  } else {
-    musicBtn.classList.remove('playing');
-    musicBtn.classList.add('muted');
-    musicIconOn.style.display  = 'none';
-    musicIconOff.style.display = 'flex';
-  }
-}
-
-musicBtn.addEventListener('click', () => {
-  const nowPlaying = window.gameMusic.toggle();
-  updateMusicBtn(nowPlaying);
-});
