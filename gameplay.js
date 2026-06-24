@@ -13,11 +13,18 @@ const Gameplay = (() => {
       elHitLayer, elCombo, elComboMult;
 
   /* ── state ── */
-  let running    = false;
-  let nextHand   = 'left';   // alternates each punch
-  let busy       = false;
-  let combo      = 0;
-  let comboTimer = null;
+  let running     = false;
+  let nextHand    = 'left';
+  let busy        = false;
+  let combo       = 0;
+  let comboTimer  = null;
+
+  /* ── Speed system ──
+     speedLevel 0..MAX_LEVEL, calculated from gap between punches.
+     Faster tapping → higher level → shorter animation durations. */
+  const MAX_LEVEL  = 10;
+  let speedLevel   = 0;
+  let lastPunchMs  = 0;
 
   const WORDS = [
     { t: 'GOOD!',    c: '#7CFC3A' },
@@ -49,6 +56,13 @@ const Gameplay = (() => {
     const dst = document.getElementById('gameSamsakImg');
     if (src && dst) dst.style.filter = src.style.filter || '';
 
+    // Glove color (chosen in Homepage > Sarung Tinju)
+    const gFilter = window.selectedGloveFilter || '';
+    const gl = elGloveL?.querySelector('img');
+    const gr = elGloveR?.querySelector('img');
+    if (gl) gl.style.filter = gFilter;
+    if (gr) gr.style.filter = gFilter;
+
     const homeSticker = document.getElementById('samsakSticker');
     const homeImg     = document.getElementById('stickerImg');
     const gameSticker = document.getElementById('gameSticker');
@@ -74,6 +88,28 @@ const Gameplay = (() => {
     );
   }
 
+  /* ── Speed: update level based on time since last punch ── */
+  function _updateSpeed() {
+    const now = Date.now();
+    const gap = lastPunchMs ? now - lastPunchMs : 9999;
+    lastPunchMs = now;
+
+    if      (gap < 250) speedLevel = Math.min(MAX_LEVEL, speedLevel + 2.0); // very rapid
+    else if (gap < 400) speedLevel = Math.min(MAX_LEVEL, speedLevel + 1.2); // fast
+    else if (gap < 650) speedLevel = Math.min(MAX_LEVEL, speedLevel + 0.5); // moderate
+    else                speedLevel = Math.max(0, speedLevel - 3.0);          // slow/stopped
+  }
+
+  /* ── Timings derived from current speed level ──
+     Normal (level 0): animDur 420ms, busyMs 310ms
+     Max    (level 10): animDur 155ms, busyMs 115ms  */
+  function _timings() {
+    const t       = speedLevel / MAX_LEVEL;              // 0..1
+    const animDur = Math.round(420 - t * 265);           // 420→155 ms
+    const busyMs  = Math.round(310 - t * 195);           // 310→115 ms
+    const impactMs = Math.round(140 - t * 90);           // 140→50  ms
+    return { animDur, busyMs, impactMs };
+  }
   /* ════════════════════════════════════════
      PUNCH
   ════════════════════════════════════════ */
@@ -81,27 +117,31 @@ const Gameplay = (() => {
     if (!running || busy) return;
     busy = true;
 
+    // Update speed level based on how fast user is tapping
+    _updateSpeed();
+    const { animDur, busyMs, impactMs } = _timings();
+    const t = speedLevel / MAX_LEVEL; // 0..1 intensity
+
     const isLeft = nextHand === 'left';
     nextHand = isLeft ? 'right' : 'left';
-
     const glove = isLeft ? elGloveL : elGloveR;
 
-    /* ── SFX ── */
-    SFX.punch(1);
+    /* ── SFX — pitch slightly higher at speed ── */
+    SFX.punch(1 + t * 0.5);
 
-    /* ── Button press visual feedback ── */
+    /* ── Button press feedback ── */
     elBtnPukul.classList.add('pressed');
-    setTimeout(() => elBtnPukul.classList.remove('pressed'), 140);
+    setTimeout(() => elBtnPukul.classList.remove('pressed'), Math.min(140, busyMs));
 
-    /* ── GLOVE animation ──
-       Left:  punches up-right toward samsak center (translateX positive, scale up)
-       Right: punches up-left toward samsak center  (translateX negative, scale up)
-       Scale increase = depth/forward rush (FPS illusion) */
-    const xDrift = isLeft ? 55 : -55;
+    /* ── GLOVE: faster + slightly more aggressive at high speed ── */
+    const xDrift  = isLeft ? 55 : -55;
+    const scaleUp = 1.45 + t * 0.15;    // 1.45 → 1.60 as speed increases
+    const yRush   = 195 + t * 30;       // 195 → 225 px
+
     const REST   = 'translateY(0px) translateX(0px) scale(1)';
-    const RUSH   = `translateY(-195px) translateX(${xDrift}px) scale(1.45)`;
-    const IMPACT = `translateY(-215px) translateX(${xDrift * 0.9}px) scale(1.50)`;
-    const PULL   = `translateY(-80px)  translateX(${xDrift * 0.3}px) scale(1.18)`;
+    const RUSH   = `translateY(-${yRush}px) translateX(${xDrift}px) scale(${scaleUp})`;
+    const IMPACT = `translateY(-${yRush + 20}px) translateX(${xDrift * 0.9}px) scale(${scaleUp + 0.05})`;
+    const PULL   = `translateY(-${yRush * 0.4}px) translateX(${xDrift * 0.3}px) scale(1.15)`;
 
     glove.animate(
       [
@@ -111,36 +151,35 @@ const Gameplay = (() => {
         { transform: PULL,   offset: 0.55, easing: 'cubic-bezier(0.4,  0,   0.4,  1)' },
         { transform: REST,   offset: 1,    easing: 'cubic-bezier(0.4,  0,   0.2,  1)' },
       ],
-      { duration: 420, fill: 'forwards' }
+      { duration: animDur, fill: 'forwards' }
     );
 
-    /* ── SAMSAK reaction ──
-       Swings away from the punch side, then pendulum back.
-       Scale dips slightly on impact (depth compression). */
-    const swingDir = isLeft ? 1 : -1;   // left punch → swings right
-    const swing    = 15 * swingDir;
-    const bounce   = -swing * 0.48;
-    const settle1  =  swing * 0.20;
-    const settle2  = -swing * 0.07;
+    /* ── SAMSAK: harder swing at high speed ── */
+    const swingDir  = isLeft ? 1 : -1;
+    const swingAmt  = (15 + t * 10) * swingDir;  // 15 → 25 deg at max
+    const bounce    = -swingAmt * 0.48;
+    const settle1   =  swingAmt * 0.20;
+    const settle2   = -swingAmt * 0.07;
+    const samDur    = Math.round(820 - t * 300);  // 820 → 520 ms (snappier at speed)
 
     elSamsakWrap.animate(
       [
-        { transform: 'translateX(-50%) rotate(0deg)        scale(1)',    offset: 0    },
-        { transform: `translateX(-50%) rotate(${swing}deg) scale(0.93)`, offset: 0.20, easing: 'cubic-bezier(0.2,0.8,0.3,1)' },
-        { transform: `translateX(-50%) rotate(${swing * 1.05}deg) scale(0.92)`, offset: 0.28 },
-        { transform: `translateX(-50%) rotate(${bounce}deg) scale(0.97)`, offset: 0.50 },
-        { transform: `translateX(-50%) rotate(${settle1}deg) scale(0.99)`, offset: 0.70 },
-        { transform: `translateX(-50%) rotate(${settle2}deg) scale(1)`,   offset: 0.86 },
-        { transform: 'translateX(-50%) rotate(0deg)        scale(1)',    offset: 1    },
+        { transform: 'translateX(-50%) rotate(0deg)              scale(1)',    offset: 0    },
+        { transform: `translateX(-50%) rotate(${swingAmt}deg)    scale(${0.93 - t * 0.04})`, offset: 0.20, easing: 'cubic-bezier(0.2,0.8,0.3,1)' },
+        { transform: `translateX(-50%) rotate(${swingAmt * 1.05}deg) scale(${0.92 - t * 0.04})`, offset: 0.28 },
+        { transform: `translateX(-50%) rotate(${bounce}deg)      scale(0.97)`, offset: 0.50 },
+        { transform: `translateX(-50%) rotate(${settle1}deg)     scale(0.99)`, offset: 0.70 },
+        { transform: `translateX(-50%) rotate(${settle2}deg)     scale(1)`,    offset: 0.86 },
+        { transform: 'translateX(-50%) rotate(0deg)              scale(1)',    offset: 1    },
       ],
-      { duration: 820, easing: 'ease-out' }
+      { duration: samDur, easing: 'ease-out' }
     );
 
-    /* ── Register hit at impact frame ── */
-    setTimeout(() => _onImpact(), 140);
+    /* ── Register hit ── */
+    setTimeout(() => _onImpact(), impactMs);
 
-    /* ── Release busy after glove retracts ── */
-    setTimeout(() => { busy = false; }, 310);
+    /* ── Release busy ── */
+    setTimeout(() => { busy = false; }, busyMs);
   }
 
   /* ── On impact: feedback + combo ── */
@@ -233,10 +272,12 @@ const Gameplay = (() => {
   function start() {
     if (!elGame) _cache();
 
-    running  = true;
-    busy     = false;
-    combo    = 0;
-    nextHand = 'left';
+    running   = true;
+    busy      = false;
+    combo     = 0;
+    nextHand  = 'left';
+    speedLevel = 0;
+    lastPunchMs = 0;
     elCombo.classList.remove('show', 'pop', 'bump');
 
     _applyCustom();
@@ -250,7 +291,9 @@ const Gameplay = (() => {
   }
 
   function stop() {
-    running = false;
+    running    = false;
+    speedLevel = 0;
+    lastPunchMs = 0;
     clearTimeout(comboTimer);
     combo = 0;
     if (elSamsakAnchor) elSamsakAnchor.getAnimations().forEach(a => a.cancel());

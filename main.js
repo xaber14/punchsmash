@@ -199,13 +199,17 @@ document.getElementById('btnSamsak').addEventListener('click', () => {
 
 /* ──────────────────────────────────────────
    2. SARUNG TINJU COLOR PICKER
+   Uses the same glove asset as Gameplay + color filters.
 ──────────────────────────────────────────── */
 const GLOVE_COLORS = [
-  { id: 'red',    label: 'Merah',  color: '#dc2626', emoji: '🥊' },
-  { id: 'blue',   label: 'Biru',   color: '#2563eb', emoji: '🥊' },
-  { id: 'black',  label: 'Hitam',  color: '#2a2a2a', emoji: '🥊' },
-  { id: 'yellow', label: 'Kuning', color: '#ca8a04', emoji: '🥊' },
+  { id: 'red',    label: 'Merah',  filter: 'none' },
+  { id: 'blue',   label: 'Biru',   filter: 'hue-rotate(200deg) saturate(1.5)' },
+  { id: 'yellow', label: 'Kuning', filter: 'hue-rotate(170deg) saturate(2.5) brightness(1.15)' },
+  { id: 'green',  label: 'Hijau',  filter: 'hue-rotate(120deg) saturate(1.6)' },
 ];
+
+// Shared so Gameplay can read the chosen glove color
+window.selectedGloveFilter = 'none';
 
 function buildSarungGrid() {
   const grid = document.getElementById('sarungColorGrid');
@@ -213,16 +217,16 @@ function buildSarungGrid() {
   GLOVE_COLORS.forEach(c => {
     const opt = document.createElement('div');
     opt.className = 'color-option' + (c.id === selectedGloveColor ? ' selected' : '');
+    const fcss = c.filter === 'none' ? '' : c.filter;
     opt.innerHTML = `
-      <div class="color-swatch-wrap">
-        <span class="glove-icon" style="color:${c.color}">${c.emoji}</span>
-        <div class="glove-swatch" style="background:${c.color}"></div>
-      </div>
+      <img class="color-thumb-glove" src="assets/glove-right.png"
+           style="filter:${fcss}" alt="${c.label}">
       <span class="color-label">${c.label}</span>
       <div class="checkmark">${c.id === selectedGloveColor ? '✔' : ''}</div>
     `;
     opt.addEventListener('click', () => {
       selectedGloveColor = c.id;
+      window.selectedGloveFilter = fcss;
       buildSarungGrid();
       setTimeout(closeSheet, 280);
     });
