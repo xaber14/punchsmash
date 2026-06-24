@@ -151,25 +151,29 @@ const Gameplay = (() => {
     _screenShake();
   }
 
-  /* ── Combo display ── */
+  /* ── Combo display — unlimited, resets after 3s idle ── */
   function _showCombo() {
-    if (combo < 2) {
-      elCombo.classList.remove('show', 'bump');
-      return;
-    }
     elComboMult.textContent = 'x' + combo;
+
     if (!elCombo.classList.contains('show')) {
+      // First punch of a new combo — make visible + entrance pop
       elCombo.classList.add('show');
-    } else {
-      elCombo.classList.remove('bump');
+      elCombo.classList.remove('pop', 'bump');
       void elCombo.offsetWidth;
+      elCombo.classList.add('pop');
+    } else {
+      // Consecutive punch — quick bump pulse (stays visible)
+      elCombo.classList.remove('bump');
+      void elCombo.offsetWidth;          // restart animation
       elCombo.classList.add('bump');
     }
+
+    // Reset 3-second idle timer on every hit
     clearTimeout(comboTimer);
     comboTimer = setTimeout(() => {
       combo = 0;
-      elCombo.classList.remove('show', 'bump');
-    }, 1800);
+      elCombo.classList.remove('show', 'pop', 'bump');
+    }, 3000);
   }
 
   /* ── Hit text + burst ── */
@@ -233,7 +237,7 @@ const Gameplay = (() => {
     busy     = false;
     combo    = 0;
     nextHand = 'left';
-    elCombo.classList.remove('show', 'bump');
+    elCombo.classList.remove('show', 'pop', 'bump');
 
     _applyCustom();
     _idleSway();
